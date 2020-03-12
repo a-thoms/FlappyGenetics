@@ -7,15 +7,17 @@ PLAYER_MOVEMENT_SPEED = 5
 GRAVITY = 1
 PLAYER_JUMP_SPEED = 20
 
+PX_BETWEEN_PIPE =250
+
 class Bird(arcade.Sprite):
     def __init__(self, id, world):
-        super().__init__("../image/bird.png", 0.25)
+        super().__init__("../image/purpleBird.png", 0.25)
         self.id = id
         self.world = world
 
         self.center_x = world.width / 8
         self.center_y = world.height / 2
-        
+
     def draw(self):
         super().draw()
         self.center_y -= 2
@@ -41,21 +43,25 @@ class World(arcade.Window):
 
         self.setup()
 
+        self.loopCount = 0
+
     def die(self, bird):
         self.bird_list.remove(bird)
 
-    def add_tuyau(self, pos):
-        tuyau = arcade.Sprite("../image/pipe.png", 0.3)
-        tuyau.center_x = pos
+    def add_tuyau(self, posX, posY):
+        tuyau = arcade.Sprite("../image/pipeUp.png", 0.35)
+        tuyau.center_x = posX
+        tuyau.center_y = posY
         self.wall_list.append(tuyau)
 
     def setup(self):
         self.background = arcade.load_texture("../image/background.png")
         self.bird_list.append(Bird("Léo", self))
         #self.add_tuyau(300)
-        self.add_tuyau(600)
-        self.add_tuyau(900)
-        self.add_tuyau(1200)
+        self.add_tuyau(600, 200)
+        self.add_tuyau(900, random.randint(-120, 240))
+        self.add_tuyau(1200, random.randint(-120, 240))
+
 
 
 
@@ -75,10 +81,12 @@ class World(arcade.Window):
                   self.die(bird)
 
             if pipe.center_x <= 0:
-                pipe.center_x = 1000
+                pipe.center_x = SCREEN_WIDTH
+                pipe.center_y = random.randint(-120,240)
             pipe.center_x -= 2
-            pipe.center_y = 200
-        print("update")
+
+        self.loopCount += 1
+        print(self.loopCount)
 
 
     def on_key_press(self, key, modifiers):
@@ -98,8 +106,9 @@ class World(arcade.Window):
 
 
 def main():
-    World(SCREEN_WIDTH, SCREEN_HEIGHT)
+    world = World(SCREEN_WIDTH, SCREEN_HEIGHT)
     arcade.run()
+    print("Final :", world.loopCount)
 
 if __name__ == "__main__":
     main()
