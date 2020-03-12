@@ -50,9 +50,16 @@ class World(arcade.Window):
 
     def add_tuyau(self, posX, posY):
         tuyau = arcade.Sprite("../image/pipeUp.png", 0.35)
+        tuyauDown = arcade.Sprite("../image/pipeDown.png", 0.35)
+
         tuyau.center_x = posX
         tuyau.center_y = posY
+
+        tuyauDown.center_x = posX
+        tuyauDown.center_y = posY + self.height +  20
+
         self.wall_list.append(tuyau)
+        self.wall_list.append(tuyauDown)
 
     def setup(self):
         self.background = arcade.load_texture("../image/background.png")
@@ -74,19 +81,23 @@ class World(arcade.Window):
             bird.draw()
 
     def on_update(self, delta_time):
+        toRemove = []
         for pipe in self.wall_list:
+            pipe.center_x -= 3
             for bird in self.bird_list:
                 hit_list = arcade.check_for_collision(bird, pipe)
                 if hit_list == True:
                   self.die(bird)
 
-            if pipe.center_x <= 0:
-                pipe.center_x = SCREEN_WIDTH
-                pipe.center_y = random.randint(-120,240)
-            pipe.center_x -= 2
 
-        self.loopCount += 1
-        print(self.loopCount)
+            if pipe.center_x <= 0:
+                index = self.wall_list.index(pipe)
+                self.wall_list.remove(pipe)
+                self.add_tuyau(self.width, random.randint(-120, 240))
+                #pipe.center_x = SCREEN_WIDTH
+                #pipe.center_y = random.randint(-120,240)
+
+
 
 
     def on_key_press(self, key, modifiers):
