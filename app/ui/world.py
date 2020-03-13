@@ -11,23 +11,33 @@ PX_BETWEEN_PIPE = SCREEN_WIDTH / 3
 
 class Bird(arcade.Sprite):
     def __init__(self, id, world):
-        super().__init__("../image/purpleBird.png", 0.25)
+        super().__init__("../image/redBird.png", 0.25)
         self.id = id
         self.world = world
-
+        self.coef =0
         self.center_x = world.width / 8
         self.center_y = world.height / 2
 
     def draw(self):
         super().draw()
-        self.center_y -= 3
+        self.coef += 1
+        move = 1.4*self.coef - 0.1 *(self.coef**2)
+        if move <= -4:
+            move = -4
+
+        elif move > 30:
+            move = 30
+        self.turn_left(move/8)
+        self.center_y = self.center_y + move
 
     def flap(self, flap):
         if flap:
+            if self.center_y <= self.world.height - (self.height/2) -10:
+                self.coef = 0
             #self.set_texture(arcade.Texture("../image/bird2.png", self.center_x, self.center_y, self.width, self.height))
 
-            if self.center_y < self.world.height - 40:
-                self.center_y += 60
+            #if self.center_y <= self.world.height - 40:
+             # self.center_y += 60
         else:
             pass
             #self.set_texture(arcade.Texture("../image/bird.png", self.center_x, self.center_y, self.width, self.height))
@@ -64,7 +74,7 @@ class World(arcade.Window):
     def setup(self):
         self.background = arcade.load_texture("../image/background.png")
         self.bird_list.append(Bird("Léo", self))
-        #self.add_tuyau(300)
+
         self.add_tuyau(self.width/2, 200)
         self.add_tuyau((self.width/2) + PX_BETWEEN_PIPE, random.randint(-120, 230))
         self.add_tuyau((self.width/2) + PX_BETWEEN_PIPE*2, random.randint(-120, 230))
@@ -72,7 +82,7 @@ class World(arcade.Window):
 
 
 
-    def on_draw(self ):
+    def on_draw(self):
         arcade.start_render()
         arcade.draw_lrwh_rectangle_textured(0, 0, self.width, self.height, self.background)
         self.wall_list.draw()
@@ -86,10 +96,10 @@ class World(arcade.Window):
             pipe.center_x -= 3
             for bird in self.bird_list:
                 hit_list = arcade.check_for_collision(bird, pipe)
-                if hit_list:
+                if hit_list or bird.center_y <= 12 :
                     self.die(bird)
 
-            if pipe.center_x <= 0:
+            if pipe.center_x + pipe.width/2 <= 0:
                 pipeToRemove.append(pipe)
 
         for pipe in pipeToRemove:
@@ -105,6 +115,13 @@ class World(arcade.Window):
         if key == arcade.key.SPACE:
             bird = self.bird_list[0]
             bird.flap(True)
+
+        if key == arcade.key.Z:
+            if len(self.bird_list) == 0:
+                self.bird_list.append(Bird("Léo", self))
+            else:
+                pass
+
 
     def on_key_release(self, symbol: int, modifiers: int):
         bird = self.bird_list[0]
