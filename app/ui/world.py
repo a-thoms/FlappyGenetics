@@ -7,7 +7,7 @@ PLAYER_MOVEMENT_SPEED = 5
 GRAVITY = 1
 PLAYER_JUMP_SPEED = 20
 
-PX_BETWEEN_PIPE =250
+PX_BETWEEN_PIPE = SCREEN_WIDTH / 3
 
 class Bird(arcade.Sprite):
     def __init__(self, id, world):
@@ -20,14 +20,14 @@ class Bird(arcade.Sprite):
 
     def draw(self):
         super().draw()
-        self.center_y -= 2
+        self.center_y -= 3
 
     def flap(self, flap):
         if flap:
             #self.set_texture(arcade.Texture("../image/bird2.png", self.center_x, self.center_y, self.width, self.height))
 
             if self.center_y < self.world.height - 40:
-                self.center_y += 80
+                self.center_y += 60
         else:
             pass
             #self.set_texture(arcade.Texture("../image/bird.png", self.center_x, self.center_y, self.width, self.height))
@@ -39,7 +39,7 @@ class World(arcade.Window):
         super().__init__(width, height)
 
         self.bird_list = []
-        self.wall_list = []
+        self.wall_list = arcade.SpriteList()
 
         self.setup()
 
@@ -65,9 +65,9 @@ class World(arcade.Window):
         self.background = arcade.load_texture("../image/background.png")
         self.bird_list.append(Bird("Léo", self))
         #self.add_tuyau(300)
-        self.add_tuyau(600, 200)
-        self.add_tuyau(900, random.randint(-120, 240))
-        self.add_tuyau(1200, random.randint(-120, 240))
+        self.add_tuyau(self.width/2, 200)
+        self.add_tuyau((self.width/2) + PX_BETWEEN_PIPE, random.randint(-120, 230))
+        self.add_tuyau((self.width/2) + PX_BETWEEN_PIPE*2, random.randint(-120, 230))
 
 
 
@@ -75,28 +75,27 @@ class World(arcade.Window):
     def on_draw(self ):
         arcade.start_render()
         arcade.draw_lrwh_rectangle_textured(0, 0, self.width, self.height, self.background)
-        for pipe in self.wall_list:
-            pipe.draw()
+        self.wall_list.draw()
         for bird in self.bird_list:
             bird.draw()
 
     def on_update(self, delta_time):
-        toRemove = []
+        pipeToRemove = []
+
         for pipe in self.wall_list:
             pipe.center_x -= 3
             for bird in self.bird_list:
                 hit_list = arcade.check_for_collision(bird, pipe)
-                if hit_list == True:
-                  self.die(bird)
-
+                if hit_list:
+                    self.die(bird)
 
             if pipe.center_x <= 0:
-                index = self.wall_list.index(pipe)
-                self.wall_list.remove(pipe)
-                self.add_tuyau(self.width, random.randint(-120, 240))
-                #pipe.center_x = SCREEN_WIDTH
-                #pipe.center_y = random.randint(-120,240)
+                pipeToRemove.append(pipe)
 
+        for pipe in pipeToRemove:
+            pipe.remove_from_sprite_lists()
+            if len(self.wall_list) % 2 == 0:
+                self.add_tuyau(self.width, random.randint(-130, 230))
 
 
 
@@ -119,7 +118,7 @@ class World(arcade.Window):
 def main():
     world = World(SCREEN_WIDTH, SCREEN_HEIGHT)
     arcade.run()
-    print("Final :", world.loopCount)
+    print("Final :", len(world.wall_list))
 
 if __name__ == "__main__":
     main()
