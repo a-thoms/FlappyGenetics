@@ -9,25 +9,30 @@ PLAYER_JUMP_SPEED = 20
 
 PX_BETWEEN_PIPE = SCREEN_WIDTH / 3
 
+BIRD = ["../image/whiteBird.png", "../image/redBird.png", "../image/purpleBird.png", "../image/blueBird.png",
+        "../image/blackBird.png", "../image/yellowBird.png",  "../image/sentientBird.png",  "../image/harlequiBird.png",
+        "../image/greenBird.png",  "../image/iceBird.png",  "../image/negativeBird.png", "../image/rageBird.png",
+        "../image/pinkBird.png", "../image/macBird.png"]
+
 class Bird(arcade.Sprite):
     def __init__(self, id, world):
-        super().__init__("../image/redBird.png", 0.25)
+        super().__init__(BIRD[random.randint(0,len(BIRD))], 0.25)
         self.id = id
         self.world = world
-        self.coef =0
+        self.coef = 0
         self.center_x = world.width / 8
         self.center_y = world.height / 2
 
     def draw(self):
         super().draw()
         self.coef += 1
-        move = 1.4*self.coef - 0.1 *(self.coef**2)
-        if move <= -4:
-            move = -4
+        move = 1.4*self.coef - 0.11 * (self.coef**2)
+        if move <= -4.5:
+            move = -4.5
 
-        elif move > 30:
-            move = 30
-        self.turn_left(move/8)
+        elif move > 32:
+            move = 32
+        self.turn_left(move/6)
         self.center_y = self.center_y + move
 
     def flap(self, flap):
@@ -91,7 +96,6 @@ class World(arcade.Window):
 
     def on_update(self, delta_time):
         pipeToRemove = []
-
         for pipe in self.wall_list:
             pipe.center_x -= 3
             for bird in self.bird_list:
@@ -121,7 +125,8 @@ class World(arcade.Window):
                 self.bird_list.append(Bird("Léo", self))
             else:
                 pass
-
+        if key == arcade.key.A:
+            self.bird_list.append(Bird("Léo", self))
 
     def on_key_release(self, symbol: int, modifiers: int):
         bird = self.bird_list[0]
