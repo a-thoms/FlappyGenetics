@@ -50,7 +50,7 @@ class Bird(arcade.Sprite):
 
 
 class World(arcade.Window):
-    def __init__(self, width, height):
+    def __init__(self, width, height, simulation):
         super().__init__(width, height)
 
         self.bird_list = []
@@ -78,14 +78,17 @@ class World(arcade.Window):
 
     def setup(self):
         self.background = arcade.load_texture("../image/background.png")
-        self.bird_list.append(Bird("Léo", self))
+
 
         self.add_tuyau(self.width/2, 200)
         self.add_tuyau((self.width/2) + PX_BETWEEN_PIPE, random.randint(-120, 230))
         self.add_tuyau((self.width/2) + PX_BETWEEN_PIPE*2, random.randint(-120, 230))
 
 
-
+    def create_birds(self, size):
+        for i in range(0, size):
+            self.bird_list.append(Bird(str(i), self))
+        return self.bird_list
 
     def on_draw(self):
         arcade.start_render()
@@ -135,12 +138,10 @@ class World(arcade.Window):
     def exit_game(self):
         exit(0)
 
-
-
-def main():
-    world = World(SCREEN_WIDTH, SCREEN_HEIGHT)
-    arcade.run()
-    print("Final :", len(world.wall_list))
+    def run(self):
+        arcade.run()
 
 if __name__ == "__main__":
-    main()
+    world = World(SCREEN_WIDTH, SCREEN_HEIGHT)
+    world.run()
+    print("Final :", len(world.wall_list))
