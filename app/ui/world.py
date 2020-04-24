@@ -14,6 +14,8 @@ BIRD = ["../image/whiteBird.png", "../image/redBird.png", "../image/purpleBird.p
         "../image/greenBird.png",  "../image/iceBird.png",  "../image/negativeBird.png", "../image/rageBird.png",
         "../image/pinkBird.png", "../image/macBird.png"]
 
+
+
 class Bird(arcade.Sprite):
     def __init__(self, id, world):
         super().__init__(BIRD[random.randint(0,len(BIRD))], 0.25)
@@ -37,12 +39,10 @@ class Bird(arcade.Sprite):
 
     def flap(self, flap):
         if flap:
-            if self.center_y <= self.world.height - (self.height/2) -10:
+            if self.center_y <= self.world.height - (self.height/2) - 10:
                 self.coef = 0
             #self.set_texture(arcade.Texture("../image/bird2.png", self.center_x, self.center_y, self.width, self.height))
 
-            #if self.center_y <= self.world.height - 40:
-             # self.center_y += 60
         else:
             pass
             #self.set_texture(arcade.Texture("../image/bird.png", self.center_x, self.center_y, self.width, self.height))
@@ -71,7 +71,7 @@ class World(arcade.Window):
         tuyau.center_y = posY
 
         tuyauDown.center_x = posX
-        tuyauDown.center_y = posY + self.height +  20
+        tuyauDown.center_y = posY + self.height + 10
 
         self.wall_list.append(tuyau)
         self.wall_list.append(tuyauDown)
