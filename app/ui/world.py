@@ -9,46 +9,6 @@ PLAYER_JUMP_SPEED = 20
 
 PX_BETWEEN_PIPE = SCREEN_WIDTH / 3
 
-BIRD = ["../image/whiteBird.png", "../image/redBird.png", "../image/purpleBird.png", "../image/blueBird.png",
-        "../image/blackBird.png", "../image/yellowBird.png",  "../image/sentientBird.png",  "../image/harlequiBird.png",
-        "../image/greenBird.png",  "../image/iceBird.png",  "../image/negativeBird.png", "../image/rageBird.png",
-        "../image/pinkBird.png", "../image/macBird.png"]
-
-class Bird(arcade.Sprite):
-    def __init__(self, id, world):
-        super().__init__(BIRD[random.randint(0,len(BIRD))], 0.25)
-        self.id = id
-        self.world = world
-        self.coef = 0
-        self.center_x = world.width / 8
-        self.center_y = world.height / 2
-
-    def draw(self):
-        super().draw()
-        self.coef += 1
-        move = 1.4*self.coef - 0.11 * (self.coef**2)
-        if move <= -4.5:
-            move = -4.5
-
-        elif move > 32:
-            move = 32
-        self.turn_left(move/6)
-        self.center_y = self.center_y + move
-
-    def flap(self, flap):
-        if flap:
-            if self.center_y <= self.world.height - (self.height/2) -10:
-                self.coef = 0
-            #self.set_texture(arcade.Texture("../image/bird2.png", self.center_x, self.center_y, self.width, self.height))
-
-            #if self.center_y <= self.world.height - 40:
-             # self.center_y += 60
-        else:
-            pass
-            #self.set_texture(arcade.Texture("../image/bird.png", self.center_x, self.center_y, self.width, self.height))
-
-
-
 class World(arcade.Window):
     def __init__(self, width, height, simulation):
         super().__init__(width, height)
